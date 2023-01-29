@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>6.2</version>
+    <date>2023-01-29T23:49:57Z</date>
+    <template_groups>
+        <template_group>
+            <uuid>3eb5a9ed0e054f7a94440526659c6d1f</uuid>
+            <name>Custodian 2016</name>
+        </template_group>
+    </template_groups>
+    <templates>
+        <template>
+            <uuid>61b82baee0ac4606b7cb5ea60f632206</uuid>
+            <template>Custodian Template</template>
+            <name>Custodian Template</name>
+            <groups>
+                <group>
+                    <name>Custodian 2016</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>172e3f06eb9a44778a73e2e83f410cf9</uuid>
+                    <name>CSD RabbitMQ Gateway Monitoring</name>
+                    <key>service_state[CSDMQ]</key>
+                    <valuemap>
+                        <name>Windows service state</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <uuid>871e3663197e4fa28b8362f1307d1b06</uuid>
+                            <expression>last(/Custodian Template/service_state[CSDMQ])&lt;&gt;0</expression>
+                            <name>[{HOST.NAME}] CSD RabbitMQ Gateway</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>a5e49aba3d1d43bd8b55b641fbd8a79e</uuid>
+                    <name>Custodian.Web Sync Service Monitoring</name>
+                    <key>service_state[CWsync]</key>
+                    <valuemap>
+                        <name>Windows service state</name>
+                    </valuemap>
+                    <triggers>
+                        <trigger>
+                            <uuid>780f8fc62d44446bb9330b4e28119c30</uuid>
+                            <expression>last(/Custodian Template/service_state[CWsync])&lt;&gt;0</expression>
+                            <name>[{HOST.NAME}] Custodian.Web Sync Service</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <httptests>
+                <httptest>
+                    <uuid>c6f53ebb0e8541b6941bf0f6bdbef9aa</uuid>
+                    <name>Custodian Web</name>
+                    <delay>10m</delay>
+                    <steps>
+                        <step>
+                            <name>Load Main Page</name>
+                            <url>http://{HOST.IP}/Custodian.Web.ISAPI.dll</url>
+                            <follow_redirects>NO</follow_redirects>
+                            <status_codes>200</status_codes>
+                        </step>
+                    </steps>
+                </httptest>
+            </httptests>
+            <tags>
+                <tag>
+                    <tag>class</tag>
+                    <value>software</value>
+                </tag>
+                <tag>
+                    <tag>target</tag>
+                    <value>Custodian2016</value>
+                </tag>
+            </tags>
+            <valuemaps>
+                <valuemap>
+                    <uuid>9d95c7eed8be4ec89e756231553cf183</uuid>
+                    <name>Windows service state</name>
+                    <mappings>
+                        <mapping>
+                            <value>0</value>
+                            <newvalue>Running</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>1</value>
+                            <newvalue>Paused</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>2</value>
+                            <newvalue>Start pending</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>3</value>
+                            <newvalue>Pause pending</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>4</value>
+                            <newvalue>Continue pending</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>5</value>
+                            <newvalue>Stop pending</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>6</value>
+                            <newvalue>Stopped</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>7</value>
+                            <newvalue>Unknown</newvalue>
+                        </mapping>
+                        <mapping>
+                            <value>255</value>
+                            <newvalue>No such service</newvalue>
+                        </mapping>
+                    </mappings>
+                </valuemap>
+            </valuemaps>
+        </template>
+        <template>
+            <uuid>b6eaa1b83db846b2bad7181f51f02b50</uuid>
+            <template>Custodian Template NBU</template>
+            <name>Custodian Template NBU</name>
+            <templates>
+                <template>
+                    <name>Custodian Template</name>
+                </template>
+            </templates>
+            <groups>
+                <group>
+                    <name>Custodian 2016</name>
+                </group>
+            </groups>
+            <items>
+                <item>
+                    <uuid>4fd5d82daae84603be3fe867cef962b6</uuid>
+                    <name>NBU Custodian Gateway Monitoring</name>
+                    <key>service_state[NBUGateway]</key>
+                    <triggers>
+                        <trigger>
+                            <uuid>6c5840ddcecf410e968482ce7faa1cce</uuid>
+                            <expression>last(/Custodian Template NBU/service_state[NBUGateway])&lt;&gt;0</expression>
+                            <name>[{HOST.NAME}] NBU Custodian Gateway</name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+            </items>
+            <tags>
+                <tag>
+                    <tag>class</tag>
+                    <value>software</value>
+                </tag>
+                <tag>
+                    <tag>target</tag>
+                    <value>Custodian2016</value>
+                </tag>
+            </tags>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <uuid>24094c2a13ef409ea73a7d383dbfc95f</uuid>
+            <expression>avg(/Custodian Template NBU/web.test.time[Custodian Web,Load Main Page,resp],#3)&gt;7</expression>
+            <name>SlowMainPageLoad</name>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
+            <uuid>cb5c2eb50d7648cea7c2368a0a2fb55d</uuid>
+            <expression>last(/Custodian Template/web.test.rspcode[Custodian Web,Load Main Page])&lt;&gt;200</expression>
+            <name>[{HOST.NAME}] Custodian Web</name>
+            <priority>HIGH</priority>
+        </trigger>
+    </triggers>
+    <graphs>
+        <graph>
+            <uuid>061776fc603c4614a390314712fed0c2</uuid>
+            <name>Load Main Page</name>
+            <graph_items>
+                <graph_item>
+                    <color>1A7C11</color>
+                    <calc_fnc>ALL</calc_fnc>
+                    <item>
+                        <host>Custodian Template</host>
+                        <key>web.test.time[Custodian Web,Load Main Page,resp]</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+    </graphs>
+</zabbix_export>
