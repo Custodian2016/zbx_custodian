@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <zabbix_export>
     <version>6.2</version>
-    <date>2023-01-29T18:52:34Z</date>
+    <date>2023-03-08T17:03:18Z</date>
     <template_groups>
         <template_group>
             <uuid>3eb5a9ed0e054f7a94440526659c6d1f</uuid>
@@ -11,25 +11,14 @@
     <templates>
         <template>
             <uuid>300d72fa6a724b3094dced3841a9cea3</uuid>
-            <template>Custodian Metric Template</template>
-            <name>Custodian Metric Template</name>
+            <template>Custodian2016 by HTTP</template>
+            <name>Custodian2016 by HTTP</name>
             <groups>
                 <group>
                     <name>Custodian 2016</name>
                 </group>
             </groups>
             <items>
-                <item>
-                    <uuid>147dd5dd6fb9491291e2b4ea2373a79f</uuid>
-                    <name>Custom metric getData</name>
-                    <type>HTTP_AGENT</type>
-                    <key>Custodian</key>
-                    <history>0</history>
-                    <trends>0</trends>
-                    <value_type>TEXT</value_type>
-                    <timeout>60s</timeout>
-                    <url>{$URL_CUSTODIAN_ZABBIX_LIB}</url>
-                </item>
                 <item>
                     <uuid>d94bd4843e5c4725ba8f9b4b639c4c6d</uuid>
                     <name>Custodian.configLoaded.Error</name>
@@ -47,7 +36,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -76,7 +65,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -86,11 +75,121 @@
                     </tags>
                 </item>
                 <item>
+                    <uuid>d037a1c42f0b479fa61be2bc6794938e</uuid>
+                    <name>Custodian.DB.dbId</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.dbId</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.dbId</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>63ba7fdb52f040a89610fdd9b880d843</uuid>
+                    <name>Custodian.DB.dbName</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.dbName</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.dbName</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>a9d73d5880f64eeda386ae0751e2f280</uuid>
+                    <name>Custodian.DB.free_log_space_in_percent</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.free_log_space_in_percent</key>
+                    <delay>0</delay>
+                    <value_type>FLOAT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.free_log_space_in_percent</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>b5837c4219cd47ff9c8d7d2cf57d22ee</uuid>
+                            <expression>avg(/Custodian2016 by HTTP/Custodian.DB.free_log_space_in_percent,5m)=0</expression>
+                            <name>free_log_space_in_percent_0</name>
+                            <event_name>Лог транзакцій переповнено. Вільне місце:{ITEM.LASTVALUE1}</event_name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                        <trigger>
+                            <uuid>b8f8d5fb8cdd472895609e1678ae1ea5</uuid>
+                            <expression>avg(/Custodian2016 by HTTP/Custodian.DB.free_log_space_in_percent,5m)&lt;1</expression>
+                            <name>free_log_space_in_percent_less_1</name>
+                            <event_name>Вільне місце у логу транзакцій меньш 1%:{ITEM.LASTVALUE1}</event_name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
                     <uuid>d2ff2bea454e498294af52ac8d8f5379</uuid>
                     <name>Custodian.DB.LOG</name>
                     <type>DEPENDENT</type>
                     <key>Custodian.DB.LOG</key>
                     <delay>0</delay>
+                    <units>b</units>
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
@@ -100,9 +199,162 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>2ad3338e68da434bba2328bdcdceed9b</uuid>
+                    <name>Custodian.DB.log_reuse_wait</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.log_reuse_wait</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.log_reuse_wait</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>558f7eed13ff4e4eade300dc9114ea4e</uuid>
+                    <name>Custodian.DB.log_reuse_wait_desc</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.log_reuse_wait_desc</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.log_reuse_wait_desc</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>c78e43af10864274870a72cffa7831e7</uuid>
+                    <name>Custodian.DB.log_reuse_wait_explanation</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.log_reuse_wait_explanation</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.log_reuse_wait_explanation</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f52a4aab13b34ec5b7688fd6949afa2d</uuid>
+                    <name>Custodian.DB.log_space_in_bytes_since_last_backup</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.log_space_in_bytes_since_last_backup</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.log_space_in_bytes_since_last_backup</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>eb04302b21fb43108ddf0ecd34f5e8cb</uuid>
+                    <name>Custodian.DB.recovery_model_desc</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.recovery_model_desc</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.recovery_model_desc</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
                         <tag>
                             <tag>component</tag>
                             <value>health</value>
@@ -115,6 +367,7 @@
                     <type>DEPENDENT</type>
                     <key>Custodian.DB.ROWS</key>
                     <delay>0</delay>
+                    <units>b</units>
                     <preprocessing>
                         <step>
                             <type>JSONPATH</type>
@@ -124,9 +377,69 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>7f7506f4ff02426dab906f0f3f39bf91</uuid>
+                    <name>Custodian.DB.total_log_size_in_bytes</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.total_log_size_in_bytes</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.total_log_size_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>health</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>715c1e41bdec466aab73cb9d29bbd442</uuid>
+                    <name>Custodian.DB.used_log_space_in_bytes</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.DB.used_log_space_in_bytes</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.DB.used_log_space_in_bytes</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>DB</value>
+                        </tag>
                         <tag>
                             <tag>component</tag>
                             <value>health</value>
@@ -150,7 +463,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -165,10 +478,10 @@
                     <triggers>
                         <trigger>
                             <uuid>86d5fcf956a8448bb915e05113ff1148</uuid>
-                            <expression>(last(/Custodian Metric Template/Custodian.dbConnecting.Error)&lt;&gt;&quot;&quot;) and
-(last(/Custodian Metric Template/Custodian.dbConnecting.Error,#1)=&quot;&quot;)</expression>
+                            <expression>(last(/Custodian2016 by HTTP/Custodian.dbConnecting.Error)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.dbConnecting.Error,#1)=&quot;&quot;)</expression>
                             <recovery_mode>RECOVERY_EXPRESSION</recovery_mode>
-                            <recovery_expression>last(/Custodian Metric Template/Custodian.dbConnecting.Error)=&quot;&quot;</recovery_expression>
+                            <recovery_expression>last(/Custodian2016 by HTTP/Custodian.dbConnecting.Error)=&quot;&quot;</recovery_expression>
                             <name>Error connecting to DB</name>
                             <priority>HIGH</priority>
                         </trigger>
@@ -190,7 +503,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -198,6 +511,977 @@
                             <value>health</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>147dd5dd6fb9491291e2b4ea2373a79f</uuid>
+                    <name>getData</name>
+                    <type>HTTP_AGENT</type>
+                    <key>Custodian.getData</key>
+                    <history>0</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <timeout>60s</timeout>
+                    <url>{$URL_CUSTODIAN_ZABBIX_LIB}</url>
+                    <query_fields>
+                        <query_field>
+                            <name>INTERBAL</name>
+                            <value>{$INTERVAL}</value>
+                        </query_field>
+                        <query_field>
+                            <name>nbuPlugin</name>
+                            <value>{$NBUPLUGIN}</value>
+                        </query_field>
+                    </query_fields>
+                </item>
+                <item>
+                    <uuid>e11a6cff01a245e3bbc2ef83bc2d5db6</uuid>
+                    <name>Custodian.imbalance.imbalance</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.imbalance.imbalance</key>
+                    <delay>0</delay>
+                    <history>14d</history>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.imbalance.imbalance</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>order</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>a2cf2b5969ad4421b38af53d9be8c188</uuid>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.imbalance.imbalance)&lt;&gt;&quot;OK&quot;</expression>
+                            <name>imbalance</name>
+                            <event_name>Дисбаланс</event_name>
+                            <priority>HIGH</priority>
+                            <manual_close>YES</manual_close>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>38cf10bf369a41588ff9ac2672e21838</uuid>
+                    <name>Custodian.logs.AMQP.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.AMQP.Count</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>30d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.AMQP.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>AMQP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d9aeb8141a6940ec9e02555344205311</uuid>
+                    <name>Custodian.logs.AMQP.lastErrorMessage</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.AMQP.lastErrorMessage</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.AMQP.lastErrorMessage</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>AMQP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>c7ad5e857b4047a29ecfb5bc0c50aa00</uuid>
+                    <name>Custodian.logs.AMQP.lastLine</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.AMQP.lastLine</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.AMQP.lastLine</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>AMQP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>66c7c79b4f2343349818f93e7239a1e0</uuid>
+                    <name>Custodian.logs.AMQP.lastTime</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.AMQP.lastTime</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.AMQP.lastTime</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>AMQP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>6f05f12d2803431d92cfada76b0131e6</uuid>
+                    <name>Custodian.logs.CSQ.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.CSQ.Count</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>30d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.CSQ.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>CSQ</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f7edd92fd8ee42ad87ee9025cb43129a</uuid>
+                    <name>Custodian.logs.CSQ.lastErrorMessage</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.CSQ.lastErrorMessage</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.CSQ.lastErrorMessage</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>CSQ</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>2094a8cff8c74c5fb5bb922235ac8b6f</uuid>
+                    <name>Custodian.logs.CSQ.lastLine</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.CSQ.lastLine</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.CSQ.lastLine</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>CSQ</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>f82d2ff901154fc29941a137b8f9cdd2</uuid>
+                    <name>Custodian.logs.CSQ.lastTime</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.CSQ.lastTime</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.CSQ.lastTime</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>CSQ</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d1e3d56ff4ae45548701b9e9f69f37cc</uuid>
+                    <name>Custodian.logs.Main.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.Main.Count</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>30d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.Main.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>Main</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>dec94b18b06046fe82e82404e59febbd</uuid>
+                    <name>Custodian.logs.Main.lastErrorMessage</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.Main.lastErrorMessage</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.Main.lastErrorMessage</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>Main</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>6882f402341e4e7b9c377856893b67ff</uuid>
+                    <name>Custodian.logs.Main.lastLine</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.Main.lastLine</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.Main.lastLine</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>Main</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>bfc97723a79f4c808a1b9e2bc3ad8c1c</uuid>
+                    <name>Custodian.logs.Main.lastTime</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.Main.lastTime</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.Main.lastTime</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>Main</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>5b2a7a7e01654a91b091b56c1c25877a</uuid>
+                    <name>Custodian.logs.NBU.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.NBU.Count</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>30d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.NBU.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>NBU</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>5173206660104fe4a59f46931df12827</uuid>
+                    <name>Custodian.logs.NBU.lastErrorMessage</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.NBU.lastErrorMessage</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.NBU.lastErrorMessage</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>NBU</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>7410f2350ffc436fad290d1df9947bb8</uuid>
+                    <name>Custodian.logs.NBU.lastLine</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.NBU.lastLine</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.NBU.lastLine</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>NBU</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>e01a3ce5b54443a0b6ac5d177e4242d9</uuid>
+                    <name>Custodian.logs.NBU.lastTime</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.NBU.lastTime</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.NBU.lastTime</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>NBU</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>15057f04313242bc8b0efa6c2e4e4d92</uuid>
+                    <name>Custodian.logs.SMTP.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTP.Count</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>30d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTP.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>7010e1e574694cfc88d5a2e94737f91b</uuid>
+                    <name>Custodian.logs.SMTP.lastErrorMessage</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTP.lastErrorMessage</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTP.lastErrorMessage</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>3105f8f58aa34c7c84dd56877d76275e</uuid>
+                    <name>Custodian.logs.SMTP.lastLine</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTP.lastLine</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTP.lastLine</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>ace0d1d94954467eb3e633085a340423</uuid>
+                    <name>Custodian.logs.SMTP.lastTime</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTP.lastTime</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTP.lastTime</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTP</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>eee203f439d14c008ff134354a1ff4c7</uuid>
+                    <name>Custodian.logs.SMTPExternal.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTPExternal.Count</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>30d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTPExternal.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTPExternal</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>9520de578c7341c8a5a80e7dfb778807</uuid>
+                    <name>Custodian.logs.SMTPExternal.lastErrorMessage</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTPExternal.lastErrorMessage</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTPExternal.lastErrorMessage</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTPExternal</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>a5257434d6d141f48cb1a796243ab81d</uuid>
+                    <name>Custodian.logs.SMTPExternal.lastLine</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTPExternal.lastLine</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTPExternal.lastLine</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTPExternal</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>91c390354fcd49ff805bb6d385e36fab</uuid>
+                    <name>Custodian.logs.SMTPExternal.lastTime</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SMTPExternal.lastTime</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SMTPExternal.lastTime</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SMTPExternal</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>97e1222457844207bb28283bebf9eefa</uuid>
+                    <name>Custodian.logs.SWIFT.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SWIFT.Count</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>30d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SWIFT.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SWIFT</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>67ff264d2cf743029e8b81cf5f23b12b</uuid>
+                    <name>Custodian.logs.SWIFT.lastErrorMessage</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SWIFT.lastErrorMessage</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SWIFT.lastErrorMessage</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SWIFT</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>ae5d0e5af16e4b5eaf041e707426cf02</uuid>
+                    <name>Custodian.logs.SWIFT.lastLine</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SWIFT.lastLine</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SWIFT.lastLine</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SWIFT</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>d86aa879f3dd42e09eff9cfbd6b76115</uuid>
+                    <name>Custodian.logs.SWIFT.lastTime</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.logs.SWIFT.lastTime</key>
+                    <delay>0</delay>
+                    <history>1d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.SWIFT.lastTime</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>log</value>
+                        </tag>
+                        <tag>
+                            <tag>log</tag>
+                            <value>SWIFT</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>943c8446374145e1b75515f50a060ff7</uuid>
+                    <name>Main Page Load</name>
+                    <type>HTTP_AGENT</type>
+                    <key>Custodian.MainPage</key>
+                    <delay>10m</delay>
+                    <trends>0</trends>
+                    <value_type>CHAR</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>NOT_MATCHES_REGEX</type>
+                            <parameters>
+                                <parameter>(Exception has occured in application)</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>ERROR</error_handler_params>
+                        </step>
+                        <step>
+                            <type>MATCHES_REGEX</type>
+                            <parameters>
+                                <parameter>ERROR</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>NOERROR</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <timeout>60s</timeout>
+                    <url>{$URL_CUSTODIAN}</url>
+                    <triggers>
+                        <trigger>
+                            <uuid>052e75f8620142e98e51e2598ac3f205</uuid>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.MainPage)=&quot;ERORR&quot;</expression>
+                            <name>Main page load error</name>
+                            <event_name>При завантаженні головної сторінки</event_name>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>e28de6aea2124eeb9c5d1fbe1acf8726</uuid>
@@ -216,7 +1500,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -242,7 +1526,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -268,7 +1552,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -276,6 +1560,28 @@
                             <value>NBU</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>29b273dad324419a8c60c840c5e6ff0f</uuid>
+                            <expression>({$CHECK_NBU}=1)
+and
+(last(/Custodian2016 by HTTP/Custodian.NBU.HTTPcode)&lt;&gt;&quot;OK&quot;)
+and
+(last(/Custodian2016 by HTTP/Custodian.NBU.HTTPcode,#1)&lt;&gt;&quot;OK&quot;)
+and
+(last(/Custodian2016 by HTTP/Custodian.NBU.HTTPcode,#2)&lt;&gt;&quot;OK&quot;)
+and
+(last(/Custodian2016 by HTTP/Custodian.NBU.HTTPcode,#3)&lt;&gt;&quot;OK&quot;)
+and
+(last(/Custodian2016 by HTTP/Custodian.NBU.HTTPcode,#4)&lt;&gt;&quot;OK&quot;)
+and
+(last(/Custodian2016 by HTTP/Custodian.NBU.HTTPcode,#5)&lt;&gt;&quot;OK&quot;)</expression>
+                            <name>Стан зв'язку з НБУ</name>
+                            <event_name>Стан зв'язку з НБУ. Код помилки {ITEM.LASTVALUE1}</event_name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>b1b45f707cb44fa5b91562965916a512</uuid>
@@ -294,7 +1600,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -322,7 +1628,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -348,7 +1654,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -356,6 +1662,77 @@
                             <value>NBU</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>37ceb88e28504178b8eb190111a983e3</uuid>
+                    <name>Custodian.NBUplugin.Response</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.NBUplugin.Response</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.NBUplugin.Response</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>NBU</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>NBUplugin</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>ec49cb1cd3414401b13256c27d8d4c70</uuid>
+                    <name>Custodian.NBUplugin.State</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.NBUplugin.State</key>
+                    <delay>0</delay>
+                    <history>7d</history>
+                    <trends>0</trends>
+                    <value_type>TEXT</value_type>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.NBUplugin.State</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>NBU</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>NBUPlugin</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>9b2369a698b749c4827022bc6892c4b1</uuid>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.NBUplugin.State)&lt;&gt;&quot;OK&quot;</expression>
+                            <name>Error NBU plugin: {ITEM.LASTVALUE1}</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>AVERAGE</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>ef19c64ceed44b5fa04ec577ef10e907</uuid>
@@ -372,7 +1749,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -383,7 +1760,7 @@
                     <triggers>
                         <trigger>
                             <uuid>4029afe8eaec44dd86d709c09d0e410a</uuid>
-                            <expression>last(/Custodian Metric Template/Custodian.opDat.currentOpen)=0</expression>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.opDat.currentOpen)=0</expression>
                             <name>Поточна операційна доба не відкрита</name>
                             <priority>HIGH</priority>
                         </trigger>
@@ -407,7 +1784,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -415,6 +1792,82 @@
                             <value>health</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>3f4bb07d916d42c8beefa332bdbadc77</uuid>
+                    <name>Custodian.OrderIN3000state.count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.OrderIN3000state.count</key>
+                    <delay>0</delay>
+                    <history>14d</history>
+                    <trends>90d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.OrderIN3000state.count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>order</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>e6384e1e443941e7b0f43e3d4664a4ab</uuid>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.OrderIN3000state.count)&gt;0</expression>
+                            <name>Order in state 3000 more than 0</name>
+                            <event_name>Кількість розпоряджень у стані &quot;Повідомлення  відправлено&quot; становить: {ITEM.LASTVALUE1}</event_name>
+                            <opdata>{ITEM.LASTVALUE1</opdata>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
+                </item>
+                <item>
+                    <uuid>601eeaf5391248f59ba2a286a9c1d5bb</uuid>
+                    <name>Custodian.Queue.CSD.error.DVPerror</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.Queue.CSD.error.DVPerror</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.Queue.CSD.error.DVPerror</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>CSD</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>error</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>57cb59a9f4384565b2d028ea2db43c37</uuid>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.Queue.CSD.error.DVPerror)&gt;0</expression>
+                            <name>CSD_DVP_RC_error</name>
+                            <event_name>У журналі розпоряджень є {ITEM.LASTVALUE1} операцій(я) списання/зарахування на РЦ з помилками</event_name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>4c554e08e7594cd68619f1f2466c97d0</uuid>
@@ -431,7 +1884,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -459,7 +1912,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -471,6 +1924,44 @@
                             <value>error</value>
                         </tag>
                     </tags>
+                </item>
+                <item>
+                    <uuid>a2c249ffec5f4e7f814bf5366e218a26</uuid>
+                    <name>Custodian.Queue.CSD.error.UnexpectedDocument</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.Queue.CSD.error.UnexpectedDocument</key>
+                    <delay>0</delay>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.Queue.CSD.error.UnexpectedDocument</parameter>
+                            </parameters>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>CSD</value>
+                        </tag>
+                        <tag>
+                            <tag>component</tag>
+                            <value>error</value>
+                        </tag>
+                    </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>fe0f96a7c82745b9b0281e293ab9307a</uuid>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.Queue.CSD.error.UnexpectedDocument)&gt;0</expression>
+                            <name>Unexpected document MT544/MT546</name>
+                            <event_name>В черзі {ITEM.LASTVALUE1} повідомлення МТ544/МТ546 в статусі &quot;Неочікуваний документ&quot;</event_name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>HIGH</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>49027950aa174a61b12435c0d801180e</uuid>
@@ -487,7 +1978,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -495,6 +1986,15 @@
                             <value>CSD</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>fa0884f0ec0a4585a8873c53c1885298</uuid>
+                            <expression>avg(/Custodian2016 by HTTP/Custodian.Queue.CSD.length.Recived,#3)&gt;=3</expression>
+                            <name>У черзі НДУ багато отриманих, але не оброблених повідомлень: {ITEM.LASTVALUE1}</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>17fd3f787315431dab3f17b510584342</uuid>
@@ -511,7 +2011,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -519,6 +2019,15 @@
                             <value>CSD</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>ab4b47dad7c946939e6f5730722c771e</uuid>
+                            <expression>avg(/Custodian2016 by HTTP/Custodian.Queue.CSD.length.Sending,#3)&gt;=3</expression>
+                            <name>У черзі НДУ багато повідомлень у черзі на відправку: {ITEM.LASTVALUE1}</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>04531ab1de814c5ba1773a08763204d9</uuid>
@@ -535,7 +2044,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -543,6 +2052,15 @@
                             <value>CSD</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>cdea6f4f955b479ea23e9d252e703796</uuid>
+                            <expression>avg(/Custodian2016 by HTTP/Custodian.Queue.CSD.length.waitProcessing,#3)&gt;=3</expression>
+                            <name>У черзі НДУ багато повідомлень, які очікують обробки: {ITEM.LASTVALUE1}</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>ac901b72e13448d493b537968a3a9adc</uuid>
@@ -557,11 +2075,12 @@
                             <parameters>
                                 <parameter>$.Custodian.Queue.CSD.processing.Preprocessing</parameter>
                             </parameters>
-                            <error_handler>DISCARD_VALUE</error_handler>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -585,7 +2104,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -613,7 +2132,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -641,7 +2160,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -669,7 +2188,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -697,7 +2216,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -721,7 +2240,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -745,7 +2264,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -769,7 +2288,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -793,7 +2312,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -817,7 +2336,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -841,7 +2360,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -865,7 +2384,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -889,7 +2408,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -913,7 +2432,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -937,7 +2456,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -961,7 +2480,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -985,7 +2504,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1009,7 +2528,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1033,7 +2552,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1057,7 +2576,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1081,7 +2600,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1105,7 +2624,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1129,7 +2648,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1154,7 +2673,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1179,7 +2698,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1204,7 +2723,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1229,7 +2748,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1254,7 +2773,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1279,7 +2798,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1304,7 +2823,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1329,7 +2848,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1354,7 +2873,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1379,7 +2898,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1404,7 +2923,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1429,7 +2948,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1454,7 +2973,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1479,7 +2998,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1504,7 +3023,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1529,7 +3048,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1554,7 +3073,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1579,7 +3098,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1604,7 +3123,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1628,7 +3147,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1636,6 +3155,15 @@
                             <value>NBU</value>
                         </tag>
                     </tags>
+                    <triggers>
+                        <trigger>
+                            <uuid>a0083ea0fe034e21a35876e3e7f9b8e2</uuid>
+                            <expression>avg(/Custodian2016 by HTTP/Custodian.Queue.NBU.statistics.queueLength,#3)&gt;5</expression>
+                            <name>У черзі НБУ багато запитів, які очікують обробки: {ITEM.LASTVALUE1}</name>
+                            <opdata>{ITEM.LASTVALUE1}</opdata>
+                            <priority>WARNING</priority>
+                        </trigger>
+                    </triggers>
                 </item>
                 <item>
                     <uuid>536f16103b92492ca7444897090adea5</uuid>
@@ -1653,7 +3181,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1678,7 +3206,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1703,7 +3231,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1728,7 +3256,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1753,7 +3281,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1778,7 +3306,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1803,7 +3331,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1828,7 +3356,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1853,7 +3381,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1878,7 +3406,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1903,7 +3431,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1928,7 +3456,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1953,7 +3481,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -1978,7 +3506,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -2003,7 +3531,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -2028,7 +3556,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -2053,7 +3581,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -2078,7 +3606,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -2104,8 +3632,14 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>CSD</value>
+                        </tag>
+                    </tags>
                 </item>
                 <item>
                     <uuid>71ff9ae36abd48289d5efd3f065990d0</uuid>
@@ -2124,8 +3658,14 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>CSD</value>
+                        </tag>
+                    </tags>
                 </item>
                 <item>
                     <uuid>8addbf9366ae44ee8940d04c198fae8b</uuid>
@@ -2144,8 +3684,14 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>CSD</value>
+                        </tag>
+                    </tags>
                 </item>
                 <item>
                     <uuid>202d3d299cbd44ada7b03654fb96191c</uuid>
@@ -2164,8 +3710,14 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>CSD</value>
+                        </tag>
+                    </tags>
                 </item>
                 <item>
                     <uuid>2f2583ea913546a4b09215dcf08d80ac</uuid>
@@ -2182,7 +3734,7 @@
                         </step>
                     </preprocessing>
                     <master_item>
-                        <key>Custodian</key>
+                        <key>Custodian.getData</key>
                     </master_item>
                     <tags>
                         <tag>
@@ -2197,11 +3749,67 @@
                     <triggers>
                         <trigger>
                             <uuid>0776529395004671ae59f11650404ab3</uuid>
-                            <expression>last(/Custodian Metric Template/Custodian.reestrOwner.errorCount)&gt;0</expression>
+                            <expression>last(/Custodian2016 by HTTP/Custodian.reestrOwner.errorCount)&gt;0</expression>
                             <name>Реєстр власників не прийнято НДУ</name>
                             <priority>AVERAGE</priority>
                         </trigger>
                     </triggers>
+                </item>
+                <item>
+                    <uuid>519fc9b27138470a82f3304a233e648b</uuid>
+                    <name>Custodian.security.AccessError.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.security.AccessError.Count</key>
+                    <delay>0</delay>
+                    <history>14d</history>
+                    <trends>90d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.security.AccessErrorCount</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>securiry</value>
+                        </tag>
+                    </tags>
+                </item>
+                <item>
+                    <uuid>1fd46c0cbce2489b95568e6b233488da</uuid>
+                    <name>Custodian.security.Incorrectpassword.Count</name>
+                    <type>DEPENDENT</type>
+                    <key>Custodian.security.Incorrectpassword.Count</key>
+                    <delay>0</delay>
+                    <history>14d</history>
+                    <trends>90d</trends>
+                    <preprocessing>
+                        <step>
+                            <type>JSONPATH</type>
+                            <parameters>
+                                <parameter>$.Custodian.logs.WEB.Count</parameter>
+                            </parameters>
+                            <error_handler>CUSTOM_VALUE</error_handler>
+                            <error_handler_params>0</error_handler_params>
+                        </step>
+                    </preprocessing>
+                    <master_item>
+                        <key>Custodian.getData</key>
+                    </master_item>
+                    <tags>
+                        <tag>
+                            <tag>component</tag>
+                            <value>securiry</value>
+                        </tag>
+                    </tags>
                 </item>
             </items>
             <tags>
@@ -2216,33 +3824,112 @@
             </tags>
             <macros>
                 <macro>
-                    <macro>{$URL_CUSTODIAN_ZABBIX_LIB}</macro>
-                    <value>http://{$HOST.IP}/CustodianZabbixMetric.dll</value>
+                    <macro>{$CHECK_NBU}</macro>
+                    <value>0</value>
+                    <description>Перевіряти помилки з'єднання з НБУ</description>
                 </macro>
                 <macro>
-                    <macro>{$URL_ZABBIX}</macro>
-                    <description>URL zabbix</description>
+                    <macro>{$INTERVAL}</macro>
+                    <value>10</value>
+                </macro>
+                <macro>
+                    <macro>{$NBUPLUGIN}</macro>
+                    <value>0</value>
+                    <description>Перевіряти працездатність НБУ плагіна. 0 - не перевіряти 1 - перевіряти</description>
+                </macro>
+                <macro>
+                    <macro>{$URL_CUSTODIAN}</macro>
+                    <value>https://{HOST.IP}/</value>
+                </macro>
+                <macro>
+                    <macro>{$URL_CUSTODIAN_ZABBIX_LIB}</macro>
+                    <value>http://{$HOST.IP}/CustodianZabbixMetric.dll</value>
                 </macro>
             </macros>
         </template>
     </templates>
     <triggers>
         <trigger>
-            <uuid>29b273dad324419a8c60c840c5e6ff0f</uuid>
-            <expression>(last(/Custodian Metric Template/Custodian.NBU.HTTPcode)&lt;&gt;&quot;OK&quot;
-and
-last(/Custodian Metric Template/Custodian.NBU.HTTPcode)&lt;&gt;&quot;&quot;)
-or
-((last(/Custodian Metric Template/Custodian.NBU.HTTPcode)=&quot;&quot;)
-and
-last(/Custodian Metric Template/Custodian.NBU.HTTPError)&lt;&gt;&quot;&quot;)</expression>
-            <name>Стан зв'язку з НБУ</name>
+            <uuid>b71e2a36af664d669128e1d31aff16c5</uuid>
+            <expression>(change(/Custodian2016 by HTTP/Custodian.logs.AMQP.Count)&gt;0) and
+(last(/Custodian2016 by HTTP/Custodian.logs.AMQP.lastLine)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.AMQP.lastTime)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.AMQP.lastErrorMessage)&lt;&gt;&quot;&quot;)</expression>
+            <name>New Error in AMQP log</name>
+            <event_name>Помилка в лог файлі AMQP. Час помилки {ITEM.LASTVALUE3}. Зміст помилки {ITEM.LASTVALUE4}</event_name>
+            <opdata>{ITEM.LASTVALUE2}</opdata>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
+            <uuid>41eaafe3e02b48028f92714c2a3c6938</uuid>
+            <expression>(change(/Custodian2016 by HTTP/Custodian.logs.CSQ.Count)&gt;0) and
+(last(/Custodian2016 by HTTP/Custodian.logs.CSQ.lastLine)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.CSQ.lastTime)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.CSQ.lastErrorMessage)&lt;&gt;&quot;&quot;)</expression>
+            <name>New Error in CSQ log</name>
+            <event_name>Помилка в лог файлі CSQ. Час помилки {ITEM.LASTVALUE3}. Зміст помилки {ITEM.LASTVALUE4}</event_name>
+            <opdata>{ITEM.LASTVALUE2}</opdata>
             <priority>HIGH</priority>
         </trigger>
         <trigger>
+            <uuid>54eb6a878f914220add6ca2b819a285d</uuid>
+            <expression>(change(/Custodian2016 by HTTP/Custodian.logs.Main.Count)&gt;0) and
+(last(/Custodian2016 by HTTP/Custodian.logs.Main.lastLine)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.Main.lastTime)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.Main.lastErrorMessage)&lt;&gt;&quot;&quot;)</expression>
+            <name>New Error in MAIN log</name>
+            <event_name>Помилка в лог файлі Main. Час помилки {ITEM.LASTVALUE3}. Зміст помилки {ITEM.LASTVALUE4}</event_name>
+            <opdata>{ITEM.LASTVALUE2}</opdata>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
+            <uuid>1d1504e688df441ab2c8132b105e6b0c</uuid>
+            <expression>(change(/Custodian2016 by HTTP/Custodian.logs.NBU.Count)&gt;0) and
+(last(/Custodian2016 by HTTP/Custodian.logs.NBU.lastLine)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.NBU.lastTime)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.NBU.lastErrorMessage)&lt;&gt;&quot;&quot;)</expression>
+            <name>New Error in NBU log</name>
+            <event_name>Помилка в лог файлі NBU. Час помилки {ITEM.LASTVALUE3}. Зміст помилки {ITEM.LASTVALUE4}</event_name>
+            <opdata>{ITEM.LASTVALUE2}</opdata>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
+            <uuid>7b585374ed0943d293879c24954d620b</uuid>
+            <expression>(change(/Custodian2016 by HTTP/Custodian.logs.SMTPExternal.Count)&gt;0) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SMTPExternal.lastLine)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SMTPExternal.lastTime)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SMTPExternal.lastErrorMessage)&lt;&gt;&quot;&quot;)</expression>
+            <name>New Error in SMTPexternal log</name>
+            <event_name>Помилка в лог файлі SMTPExternal. Час помилки {ITEM.LASTVALUE3}. Зміст помилки {ITEM.LASTVALUE4}</event_name>
+            <opdata>{ITEM.LASTVALUE2}</opdata>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
+            <uuid>ceca4431c1b741afb4f1d73977f43457</uuid>
+            <expression>(change(/Custodian2016 by HTTP/Custodian.logs.SMTP.Count)&gt;0) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SMTP.lastLine)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SMTP.lastTime)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SMTP.lastErrorMessage)&lt;&gt;&quot;&quot;)</expression>
+            <name>New Error in SMTP log</name>
+            <event_name>Помилка в лог файлі SMTP. Час помилки {ITEM.LASTVALUE3}. Зміст помилки {ITEM.LASTVALUE4}</event_name>
+            <opdata>{ITEM.LASTVALUE2}</opdata>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
+            <uuid>91b20319979a426697af48b3c123accd</uuid>
+            <expression>(change(/Custodian2016 by HTTP/Custodian.logs.SWIFT.Count)&gt;0) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SWIFT.lastLine)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SWIFT.lastTime)&lt;&gt;&quot;&quot;) and
+(last(/Custodian2016 by HTTP/Custodian.logs.SWIFT.lastErrorMessage)&lt;&gt;&quot;&quot;)</expression>
+            <name>New Error in SWIFT log</name>
+            <event_name>Помилка в лог файлі SWIFT. Час помилки {ITEM.LASTVALUE3}. Зміст помилки {ITEM.LASTVALUE4}</event_name>
+            <opdata>{ITEM.LASTVALUE2}</opdata>
+            <priority>WARNING</priority>
+        </trigger>
+        <trigger>
             <uuid>dd4648f7e71941948515794ae3c31027</uuid>
-            <expression>(last(/Custodian Metric Template/Custodian.Rabbit.In)&lt;&gt;&quot;OK&quot;) or (last(/Custodian Metric Template/Custodian.Rabbit.Out)&lt;&gt;&quot;OK&quot;) or
-(last(/Custodian Metric Template/Custodian.Rabbit.Ref)&lt;&gt;&quot;OK&quot;) or (last(/Custodian Metric Template/Custodian.Rabbit.Reg)&lt;&gt;&quot;OK&quot;)</expression>
+            <expression>(last(/Custodian2016 by HTTP/Custodian.Rabbit.In)&lt;&gt;&quot;OK&quot;) or (last(/Custodian2016 by HTTP/Custodian.Rabbit.Out)&lt;&gt;&quot;OK&quot;) or
+(last(/Custodian2016 by HTTP/Custodian.Rabbit.Ref)&lt;&gt;&quot;OK&quot;) or (last(/Custodian2016 by HTTP/Custodian.Rabbit.Reg)&lt;&gt;&quot;OK&quot;)</expression>
             <name>Стан зв'язку з НДУ (RibbitMQ)</name>
             <priority>WARNING</priority>
         </trigger>
@@ -2256,8 +3943,26 @@ last(/Custodian Metric Template/Custodian.NBU.HTTPError)&lt;&gt;&quot;&quot;)</e
                     <color>1A7C11</color>
                     <calc_fnc>ALL</calc_fnc>
                     <item>
-                        <host>Custodian Metric Template</host>
+                        <host>Custodian2016 by HTTP</host>
                         <key>Custodian.dbConnecting.Runtime</key>
+                    </item>
+                </graph_item>
+            </graph_items>
+        </graph>
+        <graph>
+            <uuid>a1a4fc6f87084953a947d48cbcb2da20</uuid>
+            <name>Log used</name>
+            <yaxismax>0</yaxismax>
+            <show_work_period>NO</show_work_period>
+            <show_triggers>NO</show_triggers>
+            <type>PIE</type>
+            <graph_items>
+                <graph_item>
+                    <color>1A7C11</color>
+                    <calc_fnc>MIN</calc_fnc>
+                    <item>
+                        <host>Custodian2016 by HTTP</host>
+                        <key>Custodian.DB.free_log_space_in_percent</key>
                     </item>
                 </graph_item>
             </graph_items>
